@@ -10,6 +10,7 @@ enum PostmanEcho {
     case justGetWithPlaceholderData
     // returns supplied headers in response.
     case echoBearerAuth
+    case echoBearerWithCustomHeaderAuth(headerName: String)
     case echoCustomHeaderAuth(headerName: String)
     case patch
     // dont exists
@@ -27,7 +28,7 @@ extension PostmanEcho: APIDefinition, AccessAuthorizable {
         case .getWithParams, .justGet, .justGetWithPlaceholderData:
             return "/get"
 
-        case .echoBearerAuth, .echoCustomHeaderAuth:
+        case .echoBearerAuth, .echoBearerWithCustomHeaderAuth, .echoCustomHeaderAuth:
             return "/headers"
 
         case .postWithBody, .postBodyWithCustomEncoder, .postWithoutBody:
@@ -43,7 +44,7 @@ extension PostmanEcho: APIDefinition, AccessAuthorizable {
 
     var method: HTTPMethod {
         switch self {
-        case .getWithParams, .justGet, .justGetWithPlaceholderData, .echoBearerAuth, .echoCustomHeaderAuth, .invalidRoute:
+        case .getWithParams, .justGet, .justGetWithPlaceholderData, .echoBearerAuth, .echoBearerWithCustomHeaderAuth, .echoCustomHeaderAuth, .invalidRoute:
             return .GET
 
         case .postWithBody, .postBodyWithCustomEncoder, .postWithoutBody:
@@ -56,7 +57,7 @@ extension PostmanEcho: APIDefinition, AccessAuthorizable {
 
     var encoding: EncodingStrategy {
         switch self {
-        case .justGet, .justGetWithPlaceholderData, .echoBearerAuth, .echoCustomHeaderAuth, .invalidRoute:
+        case .justGet, .justGetWithPlaceholderData, .echoBearerAuth, .echoBearerWithCustomHeaderAuth, .echoCustomHeaderAuth, .invalidRoute:
             return .dontEncode
             
         case let .getWithParams(params):
@@ -90,6 +91,8 @@ extension PostmanEcho: APIDefinition, AccessAuthorizable {
         switch self {
         case .echoBearerAuth:
             return .bearer
+        case .echoBearerWithCustomHeaderAuth(let headerName):
+            return .bearerWithCustomHeaderField(headerName)
         case .echoCustomHeaderAuth(let headerName):
             return .customHeaderField(headerName)
         default:

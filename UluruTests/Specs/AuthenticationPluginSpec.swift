@@ -41,6 +41,22 @@ class AuthenticationPluginSpec: QuickSpec {
                 expect(actual.headers["authorization"]).to( equal("Bearer \(ourToken)") )
             }
         }
+        
+        context("When using .bearerWithCustomHeaderField strategy") {
+            let ourCustomHeader = "our-custom-header"
+            let service = ServiceRequester<PostmanEcho>(plugins: [AuthenticationPlugin(authProvider)])
+            var actual: EchoHeaders!
+
+            it("should add Custom Field header with provided token") {
+                waitUntil { done in
+                    let _ = service.request(.echoBearerWithCustomHeaderAuth(headerName: ourCustomHeader), expecting: EchoHeaders.self, completion: { (result) in
+                        actual = result.forceGetParsed(EchoHeaders.self)
+                        done()
+                    })
+                }
+                expect(actual.headers[ourCustomHeader]).to( equal("Bearer \(ourToken)") )
+            }
+        }
 
         context("When using .customHeaderField strategy") {
             let ourCustomHeader = "our-custom-header"
