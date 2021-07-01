@@ -7,6 +7,9 @@ public enum AuthenticationStrategy {
 
     /// Authentication with bearer scheme - `"Authorization": "Bearer <your token>"`
     case bearer
+    
+    /// Authentication with bearer scheme and custom header field - `"customHeaderField": "Bearer <your token>"`
+    case bearerWithCustomHeaderField(String)
 
     /// Authentication with custom header field - `"MyAmazingToken": "<your token>"`
     case customHeaderField(String)
@@ -15,7 +18,7 @@ public enum AuthenticationStrategy {
         switch self {
         case .none, .customHeaderField:
             return nil
-        case .bearer:
+        case .bearer, .bearerWithCustomHeaderField:
             return "Bearer"
         }
     }
