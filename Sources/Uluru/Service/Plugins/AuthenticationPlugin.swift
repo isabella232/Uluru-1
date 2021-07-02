@@ -25,7 +25,11 @@ public class AuthenticationPlugin: ServicePluginType {
             let token = provider(api)
             let value = "\(scheme) \(token)"
             authenticatedRequest.addValue(value, forHTTPHeaderField: "Authorization")
-
+        case .bearerWithCustomHeaderField(let field):
+            guard let scheme = authStrategy.scheme else { return authenticatedRequest }
+            let token = provider(api)
+            let value = "\(scheme) \(token)"
+            authenticatedRequest.addValue(value, forHTTPHeaderField: field)
         case .customHeaderField(let field):
             let token = provider(api)
             authenticatedRequest.addValue(token, forHTTPHeaderField: field)
